@@ -95,4 +95,42 @@ public class CategoryServiceImpl implements ICategoryService{
 
 
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<CategoryResponseRest> update(Category category, Long id) {
+        CategoryResponseRest responseRest = new CategoryResponseRest();
+        List<Category> categoryList = new ArrayList<>();
+        try {
+
+            Optional<Category> categorySearch = iCategoryDao.findById(id);
+            if(categorySearch.isPresent()){
+                // Se procederá a actualizar el registro
+                categorySearch.get().setName(category.getName());
+                categorySearch.get().setDescription(category.getDescription());
+
+                Category categoryToUpdate = iCategoryDao.save(categorySearch.get());
+                if(categoryToUpdate != null){
+                    categoryList.add(categoryToUpdate);
+                    responseRest.getCategoryResponse().setCategory(categoryList);
+                    responseRest.setMetadata("Respuesta OK","00","Categoria actualizada");
+                }else{
+                    responseRest.setMetadata("Respuesta Error","-1","Categoria no actualizada");
+                    return new ResponseEntity<CategoryResponseRest>(responseRest,HttpStatus.BAD_REQUEST);
+                }
+
+            }else{
+                responseRest.setMetadata("Respuesta Error","-1","Categoria no encontrada");
+                return new ResponseEntity<CategoryResponseRest>(responseRest,HttpStatus.NOT_FOUND);
+            }
+
+
+        }catch (Exception e){
+            responseRest.setMetadata("Respuesta Error","-1","Error al actualizar categoria");
+            e.getStackTrace();
+            return new ResponseEntity<CategoryResponseRest>(responseRest,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<CategoryResponseRest>(responseRest, HttpStatus.OK);
+    }
 }
