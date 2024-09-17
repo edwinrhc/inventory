@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService{
@@ -35,5 +37,33 @@ public class CategoryServiceImpl implements ICategoryService{
         return new ResponseEntity<CategoryResponseRest>(responseRest, HttpStatus.OK);
 
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<CategoryResponseRest> searchById(Long id) {
+
+        CategoryResponseRest responseRest = new CategoryResponseRest();
+        List<Category> categoryList = new ArrayList<>();
+        try {
+
+            Optional<Category> category = iCategoryDao.findById(id);
+            if(category.isPresent()){
+                //Si encontro algo
+                categoryList.add(category.get());
+                responseRest.getCategoryResponse().setCategory(categoryList);
+                responseRest.setMetadata("Respuesta Ok","00","Categoria encontrada");
+            }else{
+                responseRest.setMetadata("Respuesta Error","-1","Categoria no encontrada");
+                return new ResponseEntity<CategoryResponseRest>(responseRest,HttpStatus.NOT_FOUND);
+            }
+
+        }catch (Exception e){
+            responseRest.setMetadata("Respuesta Error","-1","Error al consultar por el ID");
+            e.getStackTrace();
+            return new ResponseEntity<CategoryResponseRest>(responseRest,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<CategoryResponseRest>(responseRest, HttpStatus.OK);
     }
 }
