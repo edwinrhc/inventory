@@ -1,0 +1,55 @@
+<!--Empieza toolbar-->
+<div class="dashboard-container">
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="snav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <h1 class="app-name">S-Inventory</h1>
+
+    <div class="right">
+      <ul>
+        <li>
+           <button mat-icon-button>
+              <mat-icon>help_outline</mat-icon>
+           </button>
+        </li>
+        <li>
+          <button mat-button [matMenuTriggerFor]="menu">
+              <mat-icon>person_outline</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+              <mat-icon>exit_to_app</mat-icon>
+              Cerrar Sesión
+          </mat-menu>
+        </li>
+      </ul>
+    </div>
+
+  </mat-toolbar>
+
+<!--  Empieza sidenav-->
+<mat-sidenav-container class="sidenav-container" [style.margin-top]="mobilQuery.matches ? 56:0">
+  <mat-sidenav #snav
+               [mode]="mobilQuery.matches ? 'over' : 'side' "
+               [fixedInViewport]="mobilQuery.matches" fixedTopGap="56">
+    <mat-nav-list>
+            <!-- Profile -->
+          <div class="profile-card">
+              <div class="header">
+                <h2>Edwin HC</h2>
+                <h4>edwinrhc@gmail.com</h4>
+              </div>
+          </div>
+    </mat-nav-list>
+
+  </mat-sidenav>
+
+</mat-sidenav-container>
+
+
+
+
+  <router-outlet></router-outlet>
+</div>
+
+
