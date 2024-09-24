@@ -1,0 +1,13 @@
+
+ul li{
+  list-style: none;
+}
+
+.alinear {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.right{
+  margin-left: auto;
+}
