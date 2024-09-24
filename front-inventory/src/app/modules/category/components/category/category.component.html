@@ -2,7 +2,8 @@
   <h2 class="alinear"> Listado de Categoías </h2>
   <mat-card-header>
     <div>
-      <mat-form-field hintLabel="Busqueda de categoria" appearance="fill">
+<!--      <mat-form-field hintLabel="Busqueda de categoria" appearance="fill">-->
+        <mat-form-field  appearance="fill">
         <mat-label>Buscar Categoría</mat-label>
         <input matInput #input>
       </mat-form-field>
@@ -12,7 +13,7 @@
     <div class="right">
       <ul>
         <li>
-          <button mat-raised-button color="primary">Agregar Categoría</button>
+          <button mat-raised-button color="primary" (click)="openCategoryDialog()">Agregar Categoría</button>
         </li>
       </ul>
     </div>
@@ -21,7 +22,7 @@
   <div mat-card-image></div>
 
   <mat-card-content>
-    <table mat-table [dataSource]="dataSource">
+    <table mat-table [dataSource]="dataSource" class="mat-cell">
 
       <!-- Id Column-->
       <ng-container matColumnDef="id">
@@ -59,8 +60,10 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-
     </table>
+
+    <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
+
   </mat-card-content>
 
 

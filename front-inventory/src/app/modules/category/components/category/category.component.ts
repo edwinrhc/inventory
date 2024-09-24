@@ -1,6 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {CategoryService} from "../../../shared/services/category.service";
 import {MatTableDataSource} from "@angular/material/table";
+import {MatDialog} from "@angular/material/dialog";
+import {NewCategoryComponent} from "../new-category/new-category.component";
 
 @Component({
   selector: 'app-category',
@@ -11,6 +13,7 @@ export class CategoryComponent implements OnInit {
 
   //Aquí se inyecta el servicio en
   private categoryService = inject(CategoryService);
+  public dialog  = inject(MatDialog);
 
   ngOnInit(): void {
        this.getCategories();
@@ -40,7 +43,20 @@ export class CategoryComponent implements OnInit {
     }
   }
 
+
+  openCategoryDialog(){
+    const dialogRef = this.dialog.open(NewCategoryComponent, {
+      width: '450px',
+
+    });
+
+    dialogRef.afterClosed().subscribe((result:any) => {
+    });
+  }
+
 }
+
+
 
 export interface CategoryElement {
   id: number;
