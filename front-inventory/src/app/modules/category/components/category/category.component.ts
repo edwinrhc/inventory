@@ -54,17 +54,17 @@ export class CategoryComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar("Categoria Agregada","Exitosa");
+        this.openSnackBar("Categoria Agregada", "Exitosa");
         this.getCategories();
       } else if (result == 2) {
-        this.openSnackBar("Se produjo un error al guardar Categoria","Error");
+        this.openSnackBar("Se produjo un error al guardar Categoria", "Error");
       }
 
     });
   }
 
   openSnackBar(message: string, action: string): MatSnackBarRef<SimpleSnackBar> {
-    return this.snackBar.open(message, action,{
+    return this.snackBar.open(message, action, {
       duration: 2000
     });
   }
@@ -73,37 +73,75 @@ export class CategoryComponent implements OnInit {
 
     const dialogRef = this.dialog.open(NewCategoryComponent, {
       width: '450px',
-     data: {id:id, name: name, description: description} // Hacemos referencia
+      data: {id: id, name: name, description: description} // Hacemos referencia
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar("Categoria Actualizada","Exitosa");
+        this.openSnackBar("Categoria Actualizada", "Exitosa");
         this.getCategories();
       } else if (result == 2) {
-        this.openSnackBar("Se produjo un error al actualizar Categoria","Error");
+        this.openSnackBar("Se produjo un error al actualizar Categoria", "Error");
       }
 
     });
 
   }
 
-  delete(id: any){
+  delete(id: any) {
 
     const dialogRef = this.dialog.open(ConfirmComponent, {
 
-      data: {id:id}
+      data: {id: id}
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result == 1) {
-        this.openSnackBar("categoría Eliminada","Exitosa");
+        this.openSnackBar("categoría Eliminada", "Exitosa");
         this.getCategories();
       } else if (result == 2) {
-        this.openSnackBar("Se produjo un error al eliminar categoría","Error");
+        this.openSnackBar("Se produjo un error al eliminar categoría", "Error");
       }
 
     });
+  }
+
+  // buscar(termino: string) {
+  //
+  //   if (termino.length === 0) {
+  //     return this.getCategories();
+  //   }
+  //
+  //   this.categoryService.getCategorieById(termino)
+  //     .subscribe((resp: any) => {
+  //       this.processCategoriesResponse(resp);
+  //     })
+  // }
+
+  // buscarName(termino: string){
+  //
+  //   if(termino.length === 0){
+  //     return this.getCategories();
+  //   }
+  //
+  //   this.categoryService.getCategorieByName(termino)
+  //     .subscribe((resp:any) => {
+  //       this.processCategoriesResponse(resp);
+  //     },
+  //       (error)=>{
+  //         console.log("Error al buscar la categoria", error);
+  //       })
+  // }
+  buscar(termino: string) {
+    if (termino.length === 0) {
+      return this.getCategories();
+    }
+    this.categoryService.getCategoryByName(termino).subscribe((data: any) => {
+      console.log('respuesta categorias: ', data);
+      this.processCategoriesResponse(data);
+    }), (error: any) => {
+      console.log('error categorias: ', error);
+    };
   }
 
 
