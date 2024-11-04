@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ProductServiceImpl implements IProductService {
     private IProductDao productDao;
 
     @Override
+    @Transactional
     public ResponseEntity<ProductResponseRest> save(Product product, Long categoryId) {
 
         ProductResponseRest response = new ProductResponseRest();
@@ -58,5 +60,14 @@ public class ProductServiceImpl implements IProductService {
             return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    public ResponseEntity<ProductResponseRest> searchById(Long id) {
+        return null;
     }
 }
