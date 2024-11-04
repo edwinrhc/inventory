@@ -6,6 +6,7 @@ import com.company.inventory.model.Category;
 import com.company.inventory.model.Product;
 import com.company.inventory.response.ProductResponseRest;
 import com.company.inventory.response.ResponseRest;
+import com.company.inventory.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +68,31 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<ProductResponseRest> searchById(Long id) {
-        return null;
+
+        ProductResponseRest response = new ProductResponseRest();
+        List<Product> list = new ArrayList<>();
+
+        try {
+            // Search product by ID
+            Optional<Product> product = productDao.findById(id);
+            if (product.isPresent()) {
+                byte[] imageDescompressed = Util.decompressZLib(product.get().getPicture());
+                product.get().setPicture(imageDescompressed);
+                list.add(product.get());
+                response.getProductResponse().setProducts(list);
+                response.setMetadata("Respuesta OK","00", "Producto encontrado");
+            } else {
+                response.setMetadata("Respuesta noK", "-1", "Producto no encontrado");
+                return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+            }
+
+        } catch (Exception e) {
+            e.getStackTrace();
+            response.setMetadata("Respuesta NOT OK", "-1", "Error al grabar el Producto no guardado");
+            return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
     }
 }
