@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,12 +111,16 @@ public class ProductServiceImpl implements IProductService {
         List<Product> listAux = new ArrayList<>();
 
         try{
-                listAux = productDao.findByNameContainingIgnoreCase(name);
+                listAux = productDao.findByNameLike(name);
 
             if(!listAux.isEmpty()){
                 listAux.stream().forEach( (p) -> {
                     byte[] imageDescompressed = Util.decompressZLib(p.getPicture());
-                    p.setPicture(imageDescompressed);
+                    // Aquí si las imagenes se ven raras eliminar la condicion y considerar otro metodo.
+                    if (imageDescompressed != null && imageDescompressed.length > 1000) {
+                        // Limita la imagen a un tamaño manejable
+                        p.setPicture(Arrays.copyOf(imageDescompressed, 1000));
+                    }
                     list.add(p);
                 });
                 response.getProductResponse().setProducts(list);
@@ -133,5 +138,28 @@ public class ProductServiceImpl implements IProductService {
         }
 
         return  new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+    }
+
+    /**
+     * @param id
+     * @return
+     */
+    @Override
+    @Transactional(readOnly = false)
+    public ResponseEntity<ProductResponseRest> deletebyId(Long id) {
+
+        ProductResponseRest responseRest = new ProductResponseRest();
+
+        try{
+            productDao.deleteById(id);
+            responseRest.setMetadata("Respuesta Ok","00", "Registro eliminado");
+
+
+        }catch (Exception e){
+            e.getStackTrace();
+            responseRest.setMetadata("Repuesta NOT OK", "-1", "Error a eliminar el producto");
+            return  new ResponseEntity<ProductResponseRest>(responseRest,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<ProductResponseRest>(responseRest, HttpStatus.OK);
     }
 }
