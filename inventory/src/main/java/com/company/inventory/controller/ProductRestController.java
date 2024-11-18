@@ -73,6 +73,13 @@ public class ProductRestController {
         return response;
     }
 
+    @GetMapping("/products")
+    public ResponseEntity<ProductResponseRest> findAll(){
+
+        ResponseEntity<ProductResponseRest> response = service.findAll();
+        return response;
+    }
+
 
 
 }
