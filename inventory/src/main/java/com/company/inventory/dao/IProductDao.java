@@ -10,7 +10,17 @@ import java.util.List;
 public interface IProductDao extends CrudRepository<Product, Long> {
 
 
-    @Query("SELECT p FROM Product p WHERE p.name LIKE :prefix%")
+    @Query("SELECT p FROM Product p WHERE p.name LIKE %:prefix%")
     List<Product> findByName(@Param("prefix")String prefix);
+
+    @Query("SELECT p from Product p WHERE p.name LIKE %?1%")
+    List<Product> findByNameLike(String name);
+
+    List<Product> findByNameContainingIgnoreCase(String name);
+
+
+
+
+
 
 }
