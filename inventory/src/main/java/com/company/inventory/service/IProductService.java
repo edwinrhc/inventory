@@ -15,5 +15,7 @@ public interface IProductService {
 
     public ResponseEntity<ProductResponseRest> findAll();
 
+    public ResponseEntity<ProductResponseRest> update(Product product,Long categoryId ,Long id);
+
 //    public ResponseEntity<ProductResponseRest>searchByAccount(int account);
 }
