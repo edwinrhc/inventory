@@ -166,6 +166,7 @@ public class ProductServiceImpl implements IProductService {
     /**
      * @return
      */
+/*
     @Override
     @Transactional(readOnly = true)
     public ResponseEntity<ProductResponseRest> findAll() {
@@ -196,6 +197,38 @@ public class ProductServiceImpl implements IProductService {
         }
         return new ResponseEntity<ProductResponseRest>(responseRest, HttpStatus.OK);
     }
+*/
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseEntity<ProductResponseRest> findAll(){
+        ProductResponseRest responseRest = new ProductResponseRest();
+        List<Product> list = new ArrayList<>();
+
+        try{
+            List<Product> listAux = (List<Product>) productDao.findAll();
+            if(!listAux.isEmpty()){
+                listAux.forEach(product -> {
+                    byte[] imageDescompressed = Util.decompressZLib(product.getPicture());
+
+                    // Descomprimir correctamente
+                    if(imageDescompressed != null){
+                        product.setPicture(imageDescompressed);
+                    }
+                    list.add(product);
+
+                });
+            }
+            responseRest.getProductResponse().setProducts(list);
+            responseRest.setMetadata("Respuesta Ok", "00", "Respuesta Exitosa");
+        }catch (Exception e){
+         responseRest.setMetadata("Respuesta Error", "-1", "Error al consultar");
+         e.printStackTrace(); // Registrar el error en la consola
+            return new ResponseEntity<>(responseRest, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(responseRest, HttpStatus.OK);
+    }
+
+
 
     /**
      * @param product
