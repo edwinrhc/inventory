@@ -2,6 +2,7 @@ import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {ProductService} from "../../shared/services/product.service";
+import {catchError, finalize, tap} from "rxjs";
 
 
 @Component({
@@ -27,10 +28,29 @@ export class ProductComponent implements OnInit {
     this.productService.getProducts()
       .subscribe((data: any) => {
         console.log("respuesta de productos: ", data);
+        this.processProductResponse(data);
       }, (error:any) => {
         console.log("error en productos: ", error);
       })
   }
+
+  processProductResponse(resp: any){
+    const dateProduct: ProductElement[] = [];
+    if(resp.metadata[0].code = "00"){
+      let listCProduct = resp.productResponse.products;
+      listCProduct.forEach((element: ProductElement) => {
+        element.category = element.category.name;
+        element.picture = 'data:image/jpg;base64,' + element.picture;
+        dateProduct.push(element);
+      });
+
+      // set the  datasource
+      this.dataSource = new MatTableDataSource<ProductElement>(dateProduct);
+      this.dataSource.paginator = this.paginator;
+
+    }
+  }
+
 
 }
 
