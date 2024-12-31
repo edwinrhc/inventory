@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CategoryService} from "../../shared/services/category.service";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ProductService} from "../../shared/services/product.service";
+import {CategoryElement} from "../../category/components/category/category.component";
+
 
 @Component({
   selector: 'app-new-product',
@@ -15,6 +17,7 @@ export class NewProductComponent implements OnInit {
 
 
   estadoFormulario: string = "Agregar";
+  categories: CategoryElement[] = [];
 
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
@@ -34,6 +37,8 @@ export class NewProductComponent implements OnInit {
         category:['', Validators.required],
         picture:['', Validators.required],
       })
+
+    this.getCategories();
   }
 
   onSave(){
@@ -44,6 +49,15 @@ export class NewProductComponent implements OnInit {
     this.dialogRef.close(3);
   }
 
+
+  getCategories(){
+    this.categoryService.getCategories()
+      .subscribe( (data:any) => {
+        this.categories = data.categoryResponse.category;
+      }, (error: any)=> {
+        console.log("error al consultar categorias")
+    })
+  }
 
 
 }
