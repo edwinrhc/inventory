@@ -18,6 +18,8 @@ export class NewProductComponent implements OnInit {
 
   estadoFormulario: string = "Agregar";
   categories: CategoryElement[] = [];
+  selectedFile: any;
+  nameImg: string ="";
 
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
@@ -57,6 +59,16 @@ export class NewProductComponent implements OnInit {
       }, (error: any)=> {
         console.log("error al consultar categorias")
     })
+  }
+
+  onFileChanged(event:any){
+
+    this.selectedFile = event.target.files[0]; // Aceder al archivo
+    console.log(this.selectedFile);
+
+    this.nameImg = event.target.files[0].name; // Recupero el nombre
+
+
   }
 
 
