@@ -23,7 +23,7 @@ export class NewProductComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
-  private productoService = inject(ProductService);
+  private productService = inject(ProductService);
   private dialogRef = inject(MatDialogRef);
   public data = inject(MAT_DIALOG_DATA);
 
@@ -44,7 +44,30 @@ export class NewProductComponent implements OnInit {
   }
 
   onSave(){
+    let data = {
+      name: this.productForm.get('name')?.value,
+      price: this.productForm.get('price')?.value,
+      account:this.productForm.get('account')?.value,
+      category: this.productForm.get('category')?.value,
+      picture: this.selectedFile
+    }
 
+    const uploadImageData = new FormData();
+    uploadImageData.append('picture', data.picture, data.picture.name);
+    uploadImageData.append('name',data.name);
+    uploadImageData.append('price',data.price);
+    uploadImageData.append('account',data.account);
+    uploadImageData.append('categoryId',data.category);
+
+    // call the service to save a product
+    this.productService.saveProduct(uploadImageData)
+        .subscribe( (data:any) =>
+        {
+          this.dialogRef.close(1);
+        },
+          (error:any) => {
+            this.dialogRef.close(2);
+          });
   }
 
   onCancel(){
