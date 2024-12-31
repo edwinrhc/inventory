@@ -11,9 +11,9 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog
 export class NewCategoryComponent implements OnInit {
 
   public categoryForm!: FormGroup;
-  private fb = inject(FormBuilder);
-  estadoFormulario: string = "Agregar";
 
+  estadoFormulario: string = "Agregar";
+  private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
   private dialogRef = inject(MatDialogRef);
   public data = inject(MAT_DIALOG_DATA);
