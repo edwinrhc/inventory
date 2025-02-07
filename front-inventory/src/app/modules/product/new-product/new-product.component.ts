@@ -19,7 +19,7 @@ export class NewProductComponent implements OnInit {
   estadoFormulario: string = "Agregar";
   categories: CategoryElement[] = [];
   selectedFile: any;
-  nameImg: string ="";
+  nameImg: string = "";
 
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
@@ -30,69 +30,95 @@ export class NewProductComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.estadoFormulario="Agregar";
+    this.estadoFormulario = "Agregar";
 
-      this.productForm = this.fb.group({
-        name:['', Validators.required],
-        price:['', Validators.required],
-        account:['', Validators.required],
-        category:['', Validators.required],
-        picture:['', Validators.required],
-      })
+    this.productForm = this.fb.group({
+      name: ['', Validators.required],
+      price: ['', Validators.required],
+      account: ['', Validators.required],
+      category: ['', Validators.required],
+      picture: ['', Validators.required],
+    })
+
+    if (this.data != null) {
+      this.updateForm(this.data);
+      this.estadoFormulario = "Actualizar";
+    }
 
     this.getCategories();
   }
 
-  onSave(){
+  onSave() {
     let data = {
       name: this.productForm.get('name')?.value,
       price: this.productForm.get('price')?.value,
-      account:this.productForm.get('account')?.value,
+      account: this.productForm.get('account')?.value,
       category: this.productForm.get('category')?.value,
       picture: this.selectedFile
     }
 
     const uploadImageData = new FormData();
     uploadImageData.append('picture', data.picture, data.picture.name);
-    uploadImageData.append('name',data.name);
-    uploadImageData.append('price',data.price);
-    uploadImageData.append('account',data.account);
-    uploadImageData.append('categoryId',data.category);
+    uploadImageData.append('name', data.name);
+    uploadImageData.append('price', data.price);
+    uploadImageData.append('account', data.account);
+    uploadImageData.append('categoryId', data.category);
 
-    // call the service to save a product
-    this.productService.saveProduct(uploadImageData)
-        .subscribe( (data:any) =>
-        {
-          this.dialogRef.close(1);
-        },
-          (error:any) => {
+    if (this.data != null) {
+      // update the product
+      this.productService.updateProduct(uploadImageData, this.data.id)
+        .subscribe((data: any) => {
+            this.dialogRef.close(1);
+          },
+          (error: any) => {
             this.dialogRef.close(2);
           });
+    } else {
+      // call the service to save a product
+      this.productService.saveProduct(uploadImageData)
+        .subscribe((data: any) => {
+            this.dialogRef.close(1);
+          },
+          (error: any) => {
+            this.dialogRef.close(2);
+          });
+    }
+
+
   }
 
-  onCancel(){
+  onCancel() {
     this.dialogRef.close(3);
   }
 
 
-  getCategories(){
+  getCategories() {
     this.categoryService.getCategories()
-      .subscribe( (data:any) => {
+      .subscribe((data: any) => {
         this.categories = data.categoryResponse.category;
-      }, (error: any)=> {
+      }, (error: any) => {
         console.log("error al consultar categorias")
-    })
+      })
   }
 
-  onFileChanged(event:any){
+  onFileChanged(event: any) {
 
     this.selectedFile = event.target.files[0]; // Aceder al archivo
     console.log(this.selectedFile);
 
     this.nameImg = event.target.files[0].name; // Recupero el nombre
 
-
   }
 
+  updateForm(data: any) {
+
+    this.productForm = this.fb.group({
+      name: [data.name, Validators.required],
+      price: [data.price, Validators.required],
+      account: [data.account, Validators.required],
+      category: [data.category.id, Validators.required],
+      picture: ['', Validators.required],
+    })
+  }
 
 }
